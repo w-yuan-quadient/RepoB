@@ -14,7 +14,12 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.REPOA_DISPATCH_TOKEN }}
         run: |
-          curl -L -X POST \
+          if [ -z "$GH_TOKEN" ]; then
+            echo "::error::Secret REPOA_DISPATCH_TOKEN is empty or unavailable in this workflow context"
+            exit 1
+          fi
+
+          curl --fail-with-body -L -X POST \
             -H "Accept: application/vnd.github+json" \
             -H "Authorization: Bearer $GH_TOKEN" \
             https://api.github.com/repos/w-yuan-quadient/repoA/dispatches \
