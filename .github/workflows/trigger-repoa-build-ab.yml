@@ -1,0 +1,21 @@
+name: Trigger RepoA build_ab
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  dispatch_to_repoa:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Trigger RepoA workflow via repository_dispatch
+        env:
+          GH_TOKEN: ${{ secrets.REPOA_DISPATCH_TOKEN }}
+        run: |
+          curl -L -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            https://api.github.com/repos/w-yuan-quadient/repoA/dispatches \
+            -d '{"event_type":"repob_push_main","client_payload":{"source_repo":"RepoB","source_ref":"${{ github.ref }}","source_sha":"${{ github.sha }}"}}'
